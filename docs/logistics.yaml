@@ -1,0 +1,318 @@
+tags:
+  - name: "logistics"
+    description: "Operations on logistics"
+paths:
+  /depts:
+    get:
+      tags:
+      - logistics
+      summary: 'Departments and floors endpoint: Returns departments and their floors'
+      operationId: deptFloors
+      responses:
+        "200":
+          description: 'Sample response: List of departments'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    floors:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                          name:
+                            type: string
+                          capacity:
+                            type: integer
+                    name:
+                      type: string
+                    capacity:
+                      type: integer
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                Invalid token:
+                  value:
+                    success: false
+                    message: Invalid authorization token
+                Missing token:
+                  value:
+                    success: false
+                    message: Access denied  
+  /depts/{depId}/floors/{floorId}/booking:
+    get:
+      tags:
+      - logistics
+      summary: 'Boookings of departments and floors endpoint: Returns bookings for a department and for a floor on a specific date'
+      operationId: bookingsFloorInDept
+      parameters:
+        - name : depId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: String ID of the department
+        - name : floorId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: String ID of the floor
+        - name : date
+          in: query
+          schema:
+            type: string
+            format: date
+          required: true
+          description: Date of the desired bookings      
+      responses:
+        "200":
+          description: 'Sample response: List of bookings'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    name:
+                      type: string
+                    bookings:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                          boxId:
+                            type: string
+                          startTime:
+                            type: integer
+                          endTime:
+                            type: integer
+                          date:
+                            type: string
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                Invalid token:
+                  value:
+                    success: false
+                    message: Invalid authorization token
+                Missing token:
+                  value:
+                    success: false
+                    message: Access denied  
+  /book/{boxId}:
+    post:
+      tags:
+      - logistics
+      summary: 'Box booking: Books a box for a user'
+      operationId: bookBox
+      parameters:
+        - name : boxId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: String ID of the box
+        - name: startTime
+          in: body
+          description: Start time of the booking in seconds
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string   
+        - name: endTime
+          in: body
+          description: End time of the booking in seconds
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string  
+      responses:
+        "200":
+          description: 'Sample response: Booking successful'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                success: true
+                message: Box B1B03 has been successfully booked from 9:00AM until 11AM   
+        "409":
+          description: Reservation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  
+              examples:
+                Start time greater than end time:
+                  value:
+                    success: false
+                    message: Start time must be less than end time   
+                Reservation outside opening hours:
+                  value:
+                    success: false
+                    message: Reservation is not within opening hours                                              
+                Reservation longer than three hours:
+                  value:
+                    success: false
+                    message: Reservation should not exceed 3 hours  
+                Multiple reservations per day for a normal user:
+                  value:
+                    success: false
+                    message: User is allowed to book only once per day                           
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                Invalid token:
+                  value:
+                    success: false
+                    message: Invalid authorization token
+                Missing token:
+                  value:
+                    success: false
+                    message: Access denied  
+  /box/{boxId}/booking:
+    get:
+      tags:
+      - logistics
+      summary: 'Boookings of a box endpoint: Returns bookings for a box on a specific date'
+      operationId: boxBookings
+      parameters:
+        - name : boxId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: String ID of the box
+        - name : date
+          in: query
+          schema:
+            type: string
+            format: date
+          required: true
+          description: Date of the desired bookings      
+      responses:
+        "200":
+          description: 'Sample response: List of bookings'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    startTime:
+                      type: integer
+                    endTime:
+                      type: integer
+                    date:
+                      type: string
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                Invalid token:
+                  value:
+                    success: false
+                    message: Invalid authorization token
+                Missing token:
+                  value:
+                    success: false
+                    message: Access denied   
+  /box/{boxId}/info:
+    get:
+      tags:
+      - logistics
+      summary: 'Information of a box endpoint: Returns information of a box'
+      operationId: boxInfo
+      parameters:
+        - name : boxId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: String ID of the box   
+      responses:
+        "200":
+          description: 'Sample response: Box information'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  floorId:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                Invalid token:
+                  value:
+                    success: false
+                    message: Invalid authorization token
+                Missing token:
+                  value:
+                    success: false
+                    message: Access denied                                 

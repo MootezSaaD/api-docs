@@ -1,0 +1,101 @@
+tags:
+  - name: "user"
+    description: "Operations about user"
+paths:
+  /login:
+    post:
+      tags:
+      - user
+      summary: 'Logs in a user'
+      operationId: logUser
+      parameters:
+      - name: email
+        in: body
+        description: Email of the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: password
+        in: body
+        description: Password of the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 'Sample response: Login successful'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /register:
+    post:
+      tags:
+      - user
+      summary: 'Register endpoint: Registers a new user'
+      operationId: regUser
+      parameters:
+      - name: firstName
+        in: body
+        description: Firstname of the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: lastName
+        in: body
+        description: Lastname of the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: email
+        in: body
+        description: Email of the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: universityID
+        in: body
+        description: UniversityID of the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+      - name: password
+        in: body
+        description: Password of the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 'Sample response: Registration successful'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

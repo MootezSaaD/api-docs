@@ -1,0 +1,42 @@
+components:
+  schemas:
+    User:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        token:
+          type: string
+    Error:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    Success:
+      required:
+      - success
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      required:
+      - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
